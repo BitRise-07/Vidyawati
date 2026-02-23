@@ -15,11 +15,11 @@ export default function AddCourse() {
 
   return (
     <div className="animate-fade-in-up">
-      <div className="grid lg:grid-cols-3 gap-8">
+      <div className="grid lg:grid-cols-3 gap-2">
         {/* Main Content */}
         <div className="lg:col-span-2">
           <div className="mb-10">
-            <h1 className="text-4xl  font-bold text-vd-secondary mb-2">
+            <h1 className="text-3xl  font-bold text-vd-secondary mb-2">
               Create <span className="bg-gradient-to-r from-[#F9872C] to-orange-500 bg-clip-text text-transparent">Course</span>
             </h1>
             <p className="text-vd-txt">Build your course step by step following our simple process</p>
@@ -44,7 +44,7 @@ export default function AddCourse() {
                 </div>
               </div>
 
-              <ul className="space-y-4">
+              <ul className="space-y-2">
                 {tips.map((tip, index) => (
                   <li key={index} className="flex items-start gap-3 group">
                     <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300 mt-0.5">

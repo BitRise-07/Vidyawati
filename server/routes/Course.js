@@ -12,6 +12,7 @@ const {
   createCourse,
   showAllCourses,
   getCourseDetails,
+  editCourse,
 } = require("../controllers/Courses");
 
 const {
@@ -32,6 +33,7 @@ const {createSubsection, updateSubSection, deleteSubSection} = require("../contr
 
  
 router.post("/createCourse", auth, isInstructor, createCourse);
+router.post("/editCourse", auth, isInstructor, editCourse);
 router.post("/getCourseDetails", getCourseDetails);
 router.get("/getAllCourses", showAllCourses);
 router.post("/addSection", auth, isInstructor, createSection);

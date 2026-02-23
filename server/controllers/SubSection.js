@@ -7,11 +7,13 @@ const {uploadImageToCloudinary} = require("../utils/imageUploader");
 exports.createSubsection = async (req, res) => {
   try {
     // fetch data
-    const { sectionId, title, description, timeDuration } = req.body;
-    const video = req.files?.videoFile;
+    const { sectionId, title, description } = req.body;
+    const video = req.files?.video;
+
+    console.log("data: ", sectionId, title, description,  video);
 
     // validate
-    if (!title || !description || !timeDuration || !video || !sectionId) {
+    if (!title || !description || !video || !sectionId) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
@@ -20,6 +22,8 @@ exports.createSubsection = async (req, res) => {
 
     // upload video
     const uploadVideo = await uploadImageToCloudinary(video, process.env.FOLDER_NAME);
+
+    const timeDuration = uploadVideo.duration;
 
     // create subsection
     const SubsectionDetails = await SubSection.create({
@@ -40,7 +44,7 @@ exports.createSubsection = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Sub-section created successfully",
-      data: SubsectionDetails,
+      data: updateSectionDetails,
     });
 
   } catch (error) {
@@ -55,22 +59,33 @@ exports.createSubsection = async (req, res) => {
 
 exports.updateSubSection = async (req, res) => {
     try{
-        const {SubSectionId, title, description, timeDuration} = req.body;
-        const video = req.files.videoFile;
+        const {subSectionId, sectionId, title, description} = req.body;
+        const video = req.files.video;
 
-        if(!SubSectionId || !title || !description || !timeDuration || !video ){
+        if(!subSectionId || !sectionId || !title || !description || !video ){
             return res.status(400).json({
                 success:false,
                 message:"All fields are required"
             });
         }
         const updateVideo = await uploadImageToCloudinary(video, process.env.FOLDER_NAME);
+        const timeDuration = updateVideo.duration;
 
-        const updateSubSectionDetails = SubSection.findByIdAndUpdate({SubSectionId}, {title}, {description},{videoUrl:updateVideo.secure_url},{new:true});
+        const updateSubSectionDetails = await SubSection.findByIdAndUpdate(
+          subSectionId,
+          {title, description, videoUrl:updateVideo.secure_url, timeDuration},
+          {new:true});
+
+        const updateSectionDetails = await Section.findOneAndUpdate(
+            sectionId,
+            { $set: { "subSection.$.title": title, "subSection.$.description": description, "subSection.$.videoUrl": updateVideo.secure_url, "subSection.$.timeDuration": timeDuration } },
+            { new: true }
+        ).populate("subSection");
 
         return res.status(200).json({
             success:true,
-            message:"Sub-section is updated successfully"
+            message:"Sub-section is updated successfully",
+            data: updateSectionDetails
         });
 
     }
@@ -84,12 +99,27 @@ exports.updateSubSection = async (req, res) => {
 
 exports.deleteSubSection = async (req, res) => {
     try{
-        const {subSectionId} = req.params;
-        await SubSection.findByIdAndDelete({subSectionId});
+        const {subSectionId, sectionId} = req.body;
+        await Section.findByIdAndUpdate(
+          {_id: sectionId},
+          { $pull: { subSection: subSectionId } },
+          { new: true }
+        );
+        const subSection = await SubSection.findByIdAndDelete(subSectionId);
+
+        if(!subSection){
+            return res.status(404).json({
+                success:false,
+                message:"Sub-section not found"
+            });
+        }
+
+        const updatedSection = await Section.findById(sectionId).populate("subSection");
 
         return res.status(200).json({
             success:true,
-            message:"Sub-section is deleted successfully"
+            message:"Sub-section is deleted successfully",
+            data: updatedSection
         });
 
     }

@@ -31,7 +31,7 @@ exports.createSection = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: "Section created successfully",
-            data: updatedCourse
+            updatedCourse
         });
 
     } catch (error) {
@@ -47,7 +47,7 @@ exports.createSection = async (req, res) => {
 // Update section
 exports.updateSection = async (req, res) => {
     try {
-        const { sectionName, sectionId } = req.body;
+        const { sectionName, sectionId, courseId } = req.body;
         if (!sectionName || !sectionId) {
             return res.status(400).json({
                 success: false,
@@ -57,10 +57,18 @@ exports.updateSection = async (req, res) => {
 
         const section = await Section.findByIdAndUpdate(sectionId, { sectionName }, { new: true });
 
+        const course = await Course.findById(courseId).populate({
+            path: 'courseContent',
+            populate: {
+                path: 'subSection', 
+                
+            }
+        });
+
         return res.status(200).json({
             success: true,
             message: "Section updated successfully",
-            data: section
+            data: course,
         });
     } catch (error) {
         return res.status(500).json({
@@ -93,7 +101,7 @@ exports.deleteSection = async (req, res) => {
     }
 
     // ✅ Remove section reference from course
-    await Course.findByIdAndUpdate(
+    const updatedCourse = await Course.findByIdAndUpdate(
       courseId,
       { $pull: { courseContent: sectionId } }, // remove sectionId from courseContent array
       { new: true }
@@ -102,6 +110,7 @@ exports.deleteSection = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Section deleted successfully and course updated",
+      data: updatedCourse
     });
   } catch (error) {
     return res.status(500).json({

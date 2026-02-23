@@ -51,6 +51,7 @@ exports.createCourse = async (req, res) => {
             instructions,
             thumbnail: thumbnailImage.secure_url,
             category: categoryDetails._id,
+            status: "Draft"
         });
 
         // Add new course to instructor's courses array
@@ -70,6 +71,63 @@ exports.createCourse = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: "Failed to create course",
+            error: error.message,
+        });
+    }
+};
+
+exports.editCourse = async (req, res) => {
+    try {
+        const { courseId, ...updates } = req.body;
+
+        const course = await Course.findById(courseId);
+
+        if (!course) {
+            return res.status(404).json({
+                success: false,
+                message: "Course not found",
+            });
+        }
+
+        // Update thumbnail if provided
+        if (req.files?.thumbnail) {
+            const thumbnail = req.files.thumbnail;
+            const thumbnailImage = await uploadImageToCloudinary(
+                thumbnail,
+                process.env.FOLDER_NAME
+            );
+            course.thumbnail = thumbnailImage.secure_url;
+        }
+
+        // Update fields
+        for (const key in updates) {
+            if (updates.hasOwnProperty(key)) {
+
+                // Parse array fields
+                if (key === "tag" || key === "instructions") {
+                    course[key] = JSON.parse(updates[key]);
+                } 
+                
+                // Direct update (including status)
+                else {
+                    course[key] = updates[key];
+                }
+            }
+        }
+
+        await course.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Course updated successfully",
+            data: course,
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to update course",
             error: error.message,
         });
     }
