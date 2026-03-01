@@ -5,15 +5,33 @@ import { useNavigate } from 'react-router-dom';
 import { setStep, setEditCourse, resetCourseState } from '../../../../slices/courseSlice';
 import { COURSE_STATUS } from '../../../../utils/constants';
 import { editCourseDetails } from '../../../../services/operations/courseDetailsApi';
-import { FaArrowLeft, FaArrowRight, FaGlobe, FaLock, FaCheckCircle, FaSpinner, FaEye, FaClock, FaTag, FaLayerGroup, FaRupeeSign } from "react-icons/fa";
+import {
+  FaArrowLeft, FaGlobe, FaLock, FaCheckCircle,
+  FaSpinner, FaTag, FaLayerGroup, FaRupeeSign, FaListUl, FaPlay
+} from "react-icons/fa";
 import { toast } from "react-hot-toast";
 
+/* ── tiny stat card ── */
+const StatTile = ({ icon, label, value, accent }) => (
+  <div className="flex items-center gap-3 p-4 rounded-xl bg-slate-50 border border-slate-100">
+    <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${accent}`}>
+      {icon}
+    </div>
+    <div className="min-w-0">
+      <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">{label}</p>
+      <p className="text-sm font-bold text-slate-800 truncate mt-0.5">{value}</p>
+    </div>
+  </div>
+);
+
 const PublishCourse = () => {
-  const { register, handleSubmit, setValue, getValues, formState: { errors } } = useForm();
+  const { register, handleSubmit, setValue, watch } = useForm();
   const { course } = useSelector(state => state.course);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+
+  const isPublic = watch("public");
 
   useEffect(() => {
     if (course?.status === COURSE_STATUS.PUBLISHED) {
@@ -24,336 +42,184 @@ const PublishCourse = () => {
   const goToCourses = () => {
     dispatch(resetCourseState());
     navigate("/dashboard/my-courses");
-    toast.success(course?.status === COURSE_STATUS.PUBLISHED 
-      ? "Course published successfully!" 
-      : "Course saved as draft");
+    toast.success(
+      course?.status === COURSE_STATUS.PUBLISHED
+        ? "Course published successfully!"
+        : "Course saved as draft"
+    );
   };
 
   const handleCoursePublish = async () => {
-    const isPublic = getValues("public");
-
+    const currentlyPublic = watch("public");
     if (
-      (course.status === COURSE_STATUS.PUBLISHED && isPublic) ||
-      (course.status === COURSE_STATUS.DRAFT && !isPublic)
+      (course.status === COURSE_STATUS.PUBLISHED && currentlyPublic) ||
+      (course.status === COURSE_STATUS.DRAFT && !currentlyPublic)
     ) {
       goToCourses();
       return;
     }
-
     const formData = new FormData();
     formData.append("courseId", course._id);
-    const newStatus = isPublic ? COURSE_STATUS.PUBLISHED : COURSE_STATUS.DRAFT;
-    formData.append("status", newStatus);
-
+    formData.append("status", currentlyPublic ? COURSE_STATUS.PUBLISHED : COURSE_STATUS.DRAFT);
     setLoading(true);
     const result = await editCourseDetails(formData);
-    if (result) {
-      goToCourses();
-    }
+    if (result) goToCourses();
     setLoading(false);
   };
 
-  const onSubmit = (data) => {
-    handleCoursePublish();
-  };
+  const formatPrice = (price) =>
+    new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0 }).format(price || 0);
 
-  const goBack = () => {
-    dispatch(setStep(2));
-    dispatch(setEditCourse(true));
-  };
-
-  // Format price
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(price || 0);
-  };
+  const totalLectures = course?.courseContent?.reduce(
+    (acc, s) => acc + (s.subSection?.length || 0), 0
+  ) ?? 0;
 
   return (
-    <div className="animate-fade-in-up">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-4xl md:text-5xl font-bold text-vd-secondary mb-4">
-          Publish <span className="bg-gradient-to-r from-[#F9872C] to-orange-500 bg-clip-text text-transparent">Course</span>
-        </h1>
-        <p className="text-lg text-vd-txt max-w-2xl">
-          Review your course details and publish it to make it available for students worldwide.
-        </p>
-      </div>
+    <div className="max-w-5xl mx-auto py-8 px-4">
 
-      {/* Progress Indicator */}
-      <div className="flex items-center gap-3 mb-8 p-4 bg-gradient-to-r from-orange-50 to-white rounded-xl border border-orange-100">
-        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-[#F9872C] to-orange-500 text-white flex items-center justify-center font-bold text-sm">
-          3
-        </div>
-        <div className="flex-1 h-2 bg-gray-200 rounded-full">
-          <div className="h-full w-full bg-gradient-to-r from-[#F9872C] to-orange-500 rounded-full"></div>
-        </div>
-        <span className="text-sm font-medium text-vd-secondary">Step 3 of 3</span>
-      </div>
+     
 
-      {/* Main Content */}
-      <div className="grid lg:grid-cols-3 gap-8">
-        {/* Left Column - Course Summary */}
+     
+
+      {/* ── Two-column layout ── */}
+      <div className="grid lg:grid-cols-5 gap-7">
+
+        {/* Left — course summary */}
+        <div className="lg:col-span-3 space-y-5">
+
+          {/* Hero banner for the course */}
+          <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
+            {/* Dark header */}
+            <div className="bg-gradient-to-r from-[#0f1b3d] to-blue-900 px-6 py-5 flex items-center gap-4">
+              <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                <FaPlay className="text-orange-400 text-sm ml-0.5" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[11px] font-semibold text-blue-300 uppercase tracking-wider mb-0.5">Course Title</p>
+                <h2 className="text-base font-bold text-white leading-snug truncate">
+                  {course?.courseName || '—'}
+                </h2>
+              </div>
+              <div className={`ml-auto shrink-0 px-2.5 py-1 rounded-lg text-xs font-bold ${
+                course?.status === COURSE_STATUS.PUBLISHED
+                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                  : 'bg-orange-500/20 text-orange-300 border border-orange-500/30'
+              }`}>
+                {course?.status === COURSE_STATUS.PUBLISHED ? 'Published' : 'Draft'}
+              </div>
+            </div>
+
+            {/* Stat grid */}
+            <div className="p-5 bg-white grid grid-cols-2 gap-3">
+              <StatTile
+                icon={<FaLayerGroup className="text-blue-500 text-sm" />}
+                label="Category"
+                value={course?.category?.name || 'Not set'}
+                accent="bg-blue-50"
+              />
+              <StatTile
+                icon={<FaRupeeSign className="text-emerald-500 text-sm" />}
+                label="Price"
+                value={course?.price ? formatPrice(course.price) : 'Free'}
+                accent="bg-emerald-50"
+              />
+              <StatTile
+                icon={<FaListUl className="text-purple-500 text-sm" />}
+                label="Sections"
+                value={`${course?.courseContent?.length || 0} sections`}
+                accent="bg-purple-50"
+              />
+              <StatTile
+                icon={<FaTag className="text-orange-500 text-sm" />}
+                label="Lectures"
+                value={`${totalLectures} lectures`}
+                accent="bg-orange-50"
+              />
+            </div>
+          </div>
+
+          {/* Checklist */}
+          <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Pre-publish checklist</p>
+            <ul className="space-y-2.5">
+              {[
+                'All sections have at least one lecture',
+                'Course thumbnail and description are set',
+                'Pricing and category are confirmed',
+                'Preview as a student before going live',
+              ].map((item, i) => (
+                <li key={i} className="flex items-start gap-2.5 text-sm text-slate-600">
+                  <FaCheckCircle className="text-emerald-400 mt-0.5 shrink-0 text-[13px]" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* Right — publish panel */}
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-2xl shadow-xl border border-orange-100 overflow-hidden">
-            {/* Header */}
-            <div className="bg-gradient-to-r from-vd-secondary to-blue-900 text-white p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                  <FaEye className="text-2xl text-white" />
+          <div className="sticky top-24 rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+
+            {/* Panel header */}
+            <div className="px-6 py-5 border-b border-slate-100">
+              <h3 className="text-base font-bold text-slate-800">Visibility Settings</h3>
+              <p className="text-xs text-slate-400 mt-0.5">Control who can see your course</p>
+            </div>
+
+            <form onSubmit={handleSubmit(handleCoursePublish)} className="p-6 space-y-5">
+
+              {/* Toggle option */}
+              <label className="flex items-start gap-3.5 cursor-pointer group">
+                <div className="relative mt-0.5 shrink-0">
+                  <input
+                    id="public"
+                    type="checkbox"
+                    {...register("public")}
+                    className="peer sr-only"
+                  />
+                  {/* custom toggle */}
+                  <div className="w-10 h-6 rounded-full bg-slate-200 peer-checked:bg-[#F9872C] transition-colors duration-200" />
+                  <div className="absolute top-1 left-1 w-4 h-4 rounded-full bg-white shadow transition-transform duration-200 peer-checked:translate-x-4" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold">Course Summary</h2>
-                  <p className="text-orange-200 text-sm">Review all course details before publishing</p>
+                  <p className="text-sm font-semibold text-slate-800">Make course public</p>
+                 
                 </div>
+              </label>
+
+              
+
+              {/* Divider */}
+              <div className="h-px bg-slate-100" />
+
+              {/* CTA buttons */}
+              <div className="space-y-2.5">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full flex items-center justify-center gap-2.5 py-3 px-5 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-[#F9872C] to-orange-400 hover:shadow-lg hover:shadow-orange-100 hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
+                >
+                  {loading ? (
+                    <><FaSpinner className="animate-spin" /> Processing…</>
+                  ) : (
+                    <><FaCheckCircle /> {isPublic ? 'Publish Course' : 'Save as Draft'}</>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => { dispatch(setStep(2)); dispatch(setEditCourse(true)); }}
+                  disabled={loading}
+                  className="w-full flex items-center justify-center gap-2.5 py-3 px-5 rounded-xl text-sm font-semibold text-slate-600 border border-slate-200 hover:border-slate-400 hover:text-slate-800 transition-all duration-200 disabled:opacity-50 disabled:pointer-events-none"
+                >
+                  <FaArrowLeft className="text-xs" /> Back to Builder
+                </button>
               </div>
-            </div>
-
-            {/* Course Details Grid */}
-            <div className="p-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Title */}
-                <div className="col-span-2">
-                  <div className="p-6 bg-gradient-to-r from-orange-50 to-white rounded-xl border border-orange-100">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-10 h-10 bg-gradient-to-r from-orange-100 to-orange-50 rounded-lg flex items-center justify-center">
-                        <FaTag className="text-orange-500" />
-                      </div>
-                      <h3 className="text-lg font-semibold text-vd-secondary">Course Title</h3>
-                    </div>
-                    <p className="text-vd-secondary font-medium text-lg">{course?.courseName}</p>
-                  </div>
-                </div>
-
-                {/* Category */}
-                <div className="p-6 bg-gradient-to-br from-white to-blue-50 rounded-xl border border-blue-100">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-gradient-to-r from-blue-100 to-blue-50 rounded-lg flex items-center justify-center">
-                      <FaLayerGroup className="text-blue-500" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-vd-secondary">Category</h3>
-                  </div>
-                  <p className="text-vd-secondary font-medium">{course?.category?.name || "Not specified"}</p>
-                </div>
-
-                {/* Price */}
-                <div className="p-6 bg-gradient-to-br from-white to-green-50 rounded-xl border border-green-100">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-gradient-to-r from-green-100 to-green-50 rounded-lg flex items-center justify-center">
-                      <FaRupeeSign className="text-green-500" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-vd-secondary">Price</h3>
-                  </div>
-                  <p className="text-vd-secondary font-medium text-xl">
-                    {course?.price ? formatPrice(course.price) : "Free"}
-                  </p>
-                </div>
-
-                {/* Sections Count */}
-                <div className="p-6 bg-gradient-to-br from-white to-purple-50 rounded-xl border border-purple-100">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-gradient-to-r from-purple-100 to-purple-50 rounded-lg flex items-center justify-center">
-                      <FaClock className="text-purple-500" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-vd-secondary">Total Sections</h3>
-                  </div>
-                  <p className="text-vd-secondary font-medium text-2xl">{course?.courseContent?.length || 0}</p>
-                </div>
-
-                {/* Total Lectures */}
-                <div className="p-6 bg-gradient-to-br from-white to-pink-50 rounded-xl border border-pink-100">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-gradient-to-r from-pink-100 to-pink-50 rounded-lg flex items-center justify-center">
-                      <FaEye className="text-pink-500" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-vd-secondary">Total Lectures</h3>
-                  </div>
-                  <p className="text-vd-secondary font-medium text-2xl">
-                    {course?.courseContent?.reduce((acc, section) => acc + (section.subSection?.length || 0), 0)}
-                  </p>
-                </div>
-
-                {/* Status */}
-                <div className="col-span-2">
-                  <div className="p-6 bg-gradient-to-r from-yellow-50 to-white rounded-xl border border-yellow-100">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-10 h-10 bg-gradient-to-r from-yellow-100 to-yellow-50 rounded-lg flex items-center justify-center">
-                        {course?.status === COURSE_STATUS.PUBLISHED ? (
-                          <FaGlobe className="text-green-500" />
-                        ) : (
-                          <FaLock className="text-orange-500" />
-                        )}
-                      </div>
-                      <h3 className="text-lg font-semibold text-vd-secondary">Current Status</h3>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className={`px-4 py-2 rounded-full text-sm font-semibold ${
-                        course?.status === COURSE_STATUS.PUBLISHED
-                          ? "bg-green-100 text-green-700"
-                          : "bg-orange-100 text-orange-700"
-                      }`}>
-                        {course?.status === COURSE_STATUS.PUBLISHED ? "Published" : "Draft"}
-                      </span>
-                      <span className="text-vd-muted">•</span>
-                      <span className="text-sm text-vd-muted">
-                        Last updated: {new Date().toLocaleDateString('en-IN', {
-                          day: 'numeric',
-                          month: 'short',
-                          year: 'numeric'
-                        })}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            </form>
           </div>
         </div>
 
-        {/* Right Column - Publish Settings */}
-        <div className="lg:col-span-1">
-          <div className="sticky top-24 space-y-6">
-            {/* Publish Card */}
-            <div className="bg-white rounded-2xl shadow-xl border border-orange-100 overflow-hidden">
-              <div className="bg-gradient-to-r from-[#F9872C] to-orange-500 p-6">
-                <h3 className="text-xl font-bold text-white mb-2">Publish Settings</h3>
-                <p className="text-orange-100 text-sm">Choose your course visibility</p>
-              </div>
-
-              <div className="p-6">
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-                  {/* Public/Private Toggle */}
-                  <div className="space-y-4">
-                    <label className="flex items-start gap-4 p-4 bg-gradient-to-r from-orange-50 to-white rounded-xl border border-orange-200 cursor-pointer group hover:border-orange-500 transition-all duration-300">
-                      <input
-                        id='public'
-                        type="checkbox"
-                        {...register("public")}
-                        className="mt-1 w-5 h-5 rounded border-2 border-gray-300 checked:bg-gradient-to-r from-[#F9872C] to-orange-500 checked:border-transparent focus:ring-0 focus:ring-offset-0 cursor-pointer"
-                      />
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <span className="font-semibold text-vd-secondary">Make this Course Public</span>
-                          {course?.status === COURSE_STATUS.PUBLISHED && (
-                            <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
-                              Currently Public
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-sm text-vd-muted">
-                          When checked, your course will be visible to all students and searchable on the platform.
-                          Uncheck to keep it as a draft.
-                        </p>
-                      </div>
-                    </label>
-
-                    {/* Status Preview */}
-                    <div className="p-4 bg-gradient-to-r from-blue-50 to-white rounded-xl border border-blue-100">
-                      <div className="flex items-center gap-3 mb-3">
-                        {getValues("public") ? (
-                          <FaGlobe className="text-green-500 text-xl" />
-                        ) : (
-                          <FaLock className="text-orange-500 text-xl" />
-                        )}
-                        <div>
-                          <p className="font-semibold text-vd-secondary">
-                            {getValues("public") ? "Public Course" : "Private Draft"}
-                          </p>
-                          <p className="text-xs text-vd-muted mt-1">
-                            {getValues("public") 
-                              ? "Your course will be live immediately after publishing"
-                              : "Only you can see this course. Publish later when ready"}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="space-y-3">
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className={`w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-3 ${
-                        loading
-                          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                          : "bg-gradient-to-r from-[#F9872C] to-orange-500 text-white hover:shadow-2xl"
-                      }`}
-                    >
-                      {loading ? (
-                        <>
-                          <FaSpinner className="animate-spin" />
-                          Processing...
-                        </>
-                      ) : (
-                        <>
-                          <FaCheckCircle />
-                          {getValues("public") ? "Publish Course" : "Save as Draft"}
-                        </>
-                      )}
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={goBack}
-                      disabled={loading}
-                      className="w-full py-4 px-6 border-2 border-vd-secondary text-vd-secondary font-bold rounded-xl hover:bg-vd-secondary hover:text-white transition-all duration-300 flex items-center justify-center gap-3"
-                    >
-                      <FaArrowLeft />
-                      Back to Course Builder
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-
-            {/* Quick Tips */}
-            <div className="bg-gradient-to-r from-green-50 to-white rounded-2xl p-6 border border-green-100">
-              <h4 className="font-semibold text-vd-secondary mb-4 flex items-center gap-3">
-                <span className="w-8 h-8 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center text-white text-sm">
-                  ✓
-                </span>
-                Before Publishing
-              </h4>
-              <ul className="space-y-3">
-                <li className="flex items-start gap-3 text-sm text-vd-txt">
-                  <span className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2"></span>
-                  <span>Review all course content and ensure no errors</span>
-                </li>
-                <li className="flex items-start gap-3 text-sm text-vd-txt">
-                  <span className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2"></span>
-                  <span>Check video quality and descriptions</span>
-                </li>
-                <li className="flex items-start gap-3 text-sm text-vd-txt">
-                  <span className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2"></span>
-                  <span>Verify pricing and category information</span>
-                </li>
-                <li className="flex items-start gap-3 text-sm text-vd-txt">
-                  <span className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2"></span>
-                  <span>Preview course as a student before publishing</span>
-                </li>
-              </ul>
-            </div>
-
-            {/* Support Card */}
-            <div className="bg-gradient-to-r from-orange-50 to-white rounded-2xl p-6 border border-orange-100 text-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-[#F9872C] to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <FaEye className="text-2xl text-white" />
-              </div>
-              <h4 className="font-semibold text-vd-secondary mb-2">Need Help?</h4>
-              <p className="text-sm text-vd-txt mb-4">
-                Our support team is here to assist you with any questions about publishing.
-              </p>
-              <button className="text-orange-500 font-semibold hover:text-orange-600 transition-colors duration-300">
-                Contact Support →
-              </button>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

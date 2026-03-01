@@ -228,7 +228,7 @@ const SubSectionModal = ({
                 <button
                   type="submit"
                   disabled={loading}
-                  className={`px-3 py-2 font-semibold rounded-xl transition-all duration-300 transform hover:-translate-y-1 flex items-center gap-2 ${
+                  className={`px-3 py-2 font-semibold rounded-xl transition-all duration-300 transform hover:-translate-y-1 flex items-center gap-2 cursor-pointer ${
                     loading
                       ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                       : "bg-gradient-to-r from-[#F9872C] to-orange-500 text-white hover:shadow-lg"

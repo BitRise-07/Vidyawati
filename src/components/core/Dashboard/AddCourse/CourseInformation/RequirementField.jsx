@@ -47,7 +47,7 @@ const RequirementField = ({name, label, register, errors, setValue, getValues}) 
         <button
           type="button"
           onClick={handleAddRequirement}
-          className="px-5 py-2.5 bg-gradient-to-r from-[#F9872C] to-orange-500 text-white font-semibold rounded-lg hover:shadow-lg transition-all duration-300 flex items-center gap-2"
+          className="px-5 py-2.5 bg-gradient-to-r from-[#F9872C] to-orange-500 text-white font-semibold rounded-lg hover:shadow-lg transition-all duration-300 flex items-center gap-2 cursor-pointer"
         >
           <FaPlus />
           Add

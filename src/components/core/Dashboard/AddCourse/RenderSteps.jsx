@@ -18,14 +18,15 @@ const RenderSteps = () => {
     <div className="animate-fade-in-up">
       {/* Progress Steps */}
       <div className="relative mb-12">
-        {/* Background dashed line */}
-        <div className="absolute bottom-13 left-10 right-0 border-t-3 border-dashed border-gray-300 transform -translate-y-1/2 -z-10"></div>
+        <div className="absolute bottom-13 left-10 right-10 h-[3px] bg-[repeating-linear-gradient(to_right,#cbd5e1_0px,#cbd5e1_8px,transparent_8px,transparent_16px)] -z-10"></div>
 
         {/* Active progress line */}
         <div
-          className="absolute bottom-13 left-10 border-t-3 border-dashed border-orange-400 transform -translate-y-1/2 transition-all duration-500 -z-10"
-          style={{ width: `${((step - 1) / (steps.length - 1)) * 100}%` }}
-        ></div>
+  className="absolute bottom-13 left-10 right-10 h-[3px] bg-[repeating-linear-gradient(to_right,#f97316_0px,#f97316_8px,transparent_8px,transparent_16px)] origin-left transition-transform duration-500 -z-10"
+  style={{
+    transform: `scaleX(${(step - 1) / (steps.length - 1)})`,
+  }}
+></div>
 
         <div className="flex justify-between">
           {steps.map((item) => (

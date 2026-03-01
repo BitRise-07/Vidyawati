@@ -20,6 +20,8 @@ const MyProfile = () => {
   const { user } = useSelector((state) => state.profile);
   const navigate = useNavigate();
 
+  const isStudent = user?.accountType === "Student";
+
   const formatDate = (dateString) => {
     if (!dateString) return "Not Provided";
     const date = new Date(dateString);
@@ -33,7 +35,7 @@ const MyProfile = () => {
   const stats = [
     {
       label: "Enrolled Courses",
-      value: "12",
+      value: user?.courses?.length ?? 0,
       icon: <FaBookOpen className="text-2xl" />,
       bg: "bg-gradient-to-br from-[#f9872c] to-[#f36e14]",
     },
@@ -99,38 +101,37 @@ const MyProfile = () => {
             <h1 className="text-3xl md:text-4xl font-extrabold text-[#192f59] leading-tight">
               My <span className="bg-gradient-to-r from-[#f9872c] to-[#ffa23c] bg-clip-text text-transparent">Profile</span>
             </h1>
-           
           </div>
-
-          
         </div>
       </header>
 
-      {/* Stats */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        {stats.map((s, i) => (
-          <div
-            key={i}
-            className={`relative overflow-hidden rounded-2xl p-5 text-white ${s.bg} shadow-lg transform hover:translate-y-[-4px] transition`}
-          >
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-xs opacity-90">{s.label}</p>
-                <p className="text-2xl md:text-3xl font-bold mt-1">{s.value}</p>
+      {/* Stats — students only */}
+      {isStudent && (
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          {stats.map((s, i) => (
+            <div
+              key={i}
+              className={`relative overflow-hidden rounded-2xl p-5 text-white ${s.bg} shadow-lg transform hover:translate-y-[-4px] transition`}
+            >
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-xs opacity-90">{s.label}</p>
+                  <p className="text-2xl md:text-3xl font-bold mt-1">{s.value}</p>
+                </div>
+                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                  {s.icon}
+                </div>
               </div>
-              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                {s.icon}
+              <div className="mt-4 h-2 bg-white/30 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-white rounded-full"
+                  style={{ width: i === 0 ? "78%" : i === 1 ? "64%" : "90%" }}
+                />
               </div>
             </div>
-            <div className="mt-4 h-2 bg-white/30 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-white rounded-full"
-                style={{ width: i === 0 ? "78%" : i === 1 ? "64%" : "90%" }}
-              />
-            </div>
-          </div>
-        ))}
-      </section>
+          ))}
+        </section>
+      )}
 
       {/* Main Card */}
       <main className="bg-white rounded-3xl shadow-[0_18px_40px_rgba(25,47,89,0.08)] border border-[#f1f5f9] p-6 md:p-8 mb-8">
@@ -144,7 +145,6 @@ const MyProfile = () => {
                   className="w-full h-full rounded-2xl object-cover"
                 />
               </div>
-             
             </div>
 
             <div>
@@ -225,102 +225,109 @@ const MyProfile = () => {
         </section>
       </main>
 
-      {/* Additional Cards */}
-      <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
-        <div className="bg-white rounded-3xl p-6 border border-[#eef6ff] shadow-sm">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-[#2b6cb0] to-[#2563eb] flex items-center justify-center">
-              <FaGraduationCap className="text-white text-2xl" />
-            </div>
-            <div>
-              <h4 className="text-lg font-semibold text-[#192f59]">Learning Progress</h4>
-              <p className="text-sm text-[#909399]">Track your course completion</p>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <div>
-              <div className="flex justify-between text-sm text-[#909399] mb-2">
-                <span>Web Development</span>
-                <span className="font-semibold text-[#192f59]">75%</span>
+      {/* Additional Cards — students only */}
+      {isStudent && (
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
+          {/* Learning Progress */}
+          <div className="bg-white rounded-3xl p-6 border border-[#eef6ff] shadow-sm">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-[#2b6cb0] to-[#2563eb] flex items-center justify-center">
+                <FaGraduationCap className="text-white text-2xl" />
               </div>
-              <div className="h-2 bg-[#f1f5f9] rounded-full overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-[#2b6cb0] to-[#2563eb] rounded-full" style={{ width: "75%" }} />
-              </div>
-            </div>
-
-            <div>
-              <div className="flex justify-between text-sm text-[#909399] mb-2">
-                <span>Data Science</span>
-                <span className="font-semibold text-[#192f59]">45%</span>
-              </div>
-              <div className="h-2 bg-[#f1f5f9] rounded-full overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-[#10b981] to-[#059669] rounded-full" style={{ width: "45%" }} />
-              </div>
-            </div>
-
-            <div>
-              <div className="flex justify-between text-sm text-[#909399] mb-2">
-                <span>Mobile Development</span>
-                <span className="font-semibold text-[#192f59]">90%</span>
-              </div>
-              <div className="h-2 bg-[#f1f5f9] rounded-full overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-[#f9872c] to-[#ff7a1a] rounded-full" style={{ width: "90%" }} />
-              </div>
-            </div>
-          </div>
-
-          <button className="mt-6 w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl border-2 border-[#2b6cb0] text-[#2b6cb0] font-semibold hover:bg-[#f0f8ff] transition">
-            View Detailed Progress
-          </button>
-        </div>
-
-        <div className="bg-white rounded-3xl p-6 border border-[#f1f5f9] shadow-sm">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-[#f9872c] to-[#ff9355] flex items-center justify-center">
-              <FaClock className="text-white text-2xl" />
-            </div>
-            <div>
-              <h4 className="text-lg font-semibold text-[#192f59]">Quick Actions</h4>
-              <p className="text-sm text-[#909399]">Useful links and tools</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <button className="w-full text-left px-4 py-3 rounded-lg border border-[#f1f5f9] hover:shadow-md transition flex items-center gap-3">
-              <FaBookOpen className="text-[#192f59]" />
               <div>
-                <p className="text-sm text-[#909399]">My Courses</p>
-                <p className="text-sm font-medium text-[#192f59]">View enrolled courses</p>
+                <h4 className="text-lg font-semibold text-[#192f59]">Learning Progress</h4>
+                <p className="text-sm text-[#909399]">Track your course completion</p>
               </div>
-            </button>
+            </div>
 
-            <button className="w-full text-left px-4 py-3 rounded-lg border border-[#f1f5f9] hover:shadow-md transition flex items-center gap-3">
-              <FaAward className="text-[#6b21a8]" />
+            <div className="space-y-4">
               <div>
-                <p className="text-sm text-[#909399]">Certificates</p>
-                <p className="text-sm font-medium text-[#192f59]">View earned certificates</p>
+                <div className="flex justify-between text-sm text-[#909399] mb-2">
+                  <span>Web Development</span>
+                  <span className="font-semibold text-[#192f59]">75%</span>
+                </div>
+                <div className="h-2 bg-[#f1f5f9] rounded-full overflow-hidden">
+                  <div className="h-full bg-gradient-to-r from-[#2b6cb0] to-[#2563eb] rounded-full" style={{ width: "75%" }} />
+                </div>
               </div>
-            </button>
 
-            <button onClick={() => navigate("/dashboard/settings/change-password")} className="w-full text-left px-4 py-3 rounded-lg border border-[#f1f5f9] hover:shadow-md transition flex items-center gap-3">
-              <FaLockIconPlaceholder />
               <div>
-                <p className="text-sm text-[#909399]">Change Password</p>
-                <p className="text-sm font-medium text-[#192f59]">Secure your account</p>
+                <div className="flex justify-between text-sm text-[#909399] mb-2">
+                  <span>Data Science</span>
+                  <span className="font-semibold text-[#192f59]">45%</span>
+                </div>
+                <div className="h-2 bg-[#f1f5f9] rounded-full overflow-hidden">
+                  <div className="h-full bg-gradient-to-r from-[#10b981] to-[#059669] rounded-full" style={{ width: "45%" }} />
+                </div>
               </div>
-            </button>
 
-            <button className="w-full text-left px-4 py-3 rounded-lg border border-[#f1f5f9] hover:shadow-md transition flex items-center gap-3">
-              <FaGraduationCap className="text-[#2563eb]" />
               <div>
-                <p className="text-sm text-[#909399]">Get Mentorship</p>
-                <p className="text-sm font-medium text-[#192f59]">Book a session</p>
+                <div className="flex justify-between text-sm text-[#909399] mb-2">
+                  <span>Mobile Development</span>
+                  <span className="font-semibold text-[#192f59]">90%</span>
+                </div>
+                <div className="h-2 bg-[#f1f5f9] rounded-full overflow-hidden">
+                  <div className="h-full bg-gradient-to-r from-[#f9872c] to-[#ff7a1a] rounded-full" style={{ width: "90%" }} />
+                </div>
               </div>
+            </div>
+
+            <button className="mt-6 w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl border-2 border-[#2b6cb0] text-[#2b6cb0] font-semibold hover:bg-[#f0f8ff] transition">
+              View Detailed Progress
             </button>
           </div>
-        </div>
-      </section>
+
+          {/* Quick Actions */}
+          <div className="bg-white rounded-3xl p-6 border border-[#f1f5f9] shadow-sm">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-[#f9872c] to-[#ff9355] flex items-center justify-center">
+                <FaClock className="text-white text-2xl" />
+              </div>
+              <div>
+                <h4 className="text-lg font-semibold text-[#192f59]">Quick Actions</h4>
+                <p className="text-sm text-[#909399]">Useful links and tools</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <button className="w-full text-left px-4 py-3 rounded-lg border border-[#f1f5f9] hover:shadow-md transition flex items-center gap-3">
+                <FaBookOpen className="text-[#192f59]" />
+                <div>
+                  <p className="text-sm text-[#909399]">My Courses</p>
+                  <p className="text-sm font-medium text-[#192f59]">View enrolled courses</p>
+                </div>
+              </button>
+
+              <button className="w-full text-left px-4 py-3 rounded-lg border border-[#f1f5f9] hover:shadow-md transition flex items-center gap-3">
+                <FaAward className="text-[#6b21a8]" />
+                <div>
+                  <p className="text-sm text-[#909399]">Certificates</p>
+                  <p className="text-sm font-medium text-[#192f59]">View earned certificates</p>
+                </div>
+              </button>
+
+              <button
+                onClick={() => navigate("/dashboard/settings/change-password")}
+                className="w-full text-left px-4 py-3 rounded-lg border border-[#f1f5f9] hover:shadow-md transition flex items-center gap-3"
+              >
+                <FaLockIconPlaceholder />
+                <div>
+                  <p className="text-sm text-[#909399]">Change Password</p>
+                  <p className="text-sm font-medium text-[#192f59]">Secure your account</p>
+                </div>
+              </button>
+
+              <button className="w-full text-left px-4 py-3 rounded-lg border border-[#f1f5f9] hover:shadow-md transition flex items-center gap-3">
+                <FaGraduationCap className="text-[#2563eb]" />
+                <div>
+                  <p className="text-sm text-[#909399]">Get Mentorship</p>
+                  <p className="text-sm font-medium text-[#192f59]">Book a session</p>
+                </div>
+              </button>
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 };

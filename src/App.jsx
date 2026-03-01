@@ -23,14 +23,20 @@ import Cart from "./components/core/Dashboard/Cart";
 import { ACCOUNT_TYPE } from "./utils/constants";
 import { useSelector } from "react-redux";
 import AddCourse from "./components/core/Dashboard/AddCourse";
+import MyCourses from "./components/core/Dashboard/MyCourses";
+import EditCourse from "./components/core/Dashboard/EditCourse";
+import Catalog from "./pages/Catalog";
+import ScrollToTop from "./components/common/ScrollToTop";
 
 function App() {
   const { user } = useSelector((state) => state.profile);
   return (
     <div className="w-screen min-h-screen bg-white flex flex-col font-inter ">
       <Navbar />
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="catalog/:catalogName" element={<Catalog />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactUs />} />
         <Route path="/signup" element={<Signup />} />
@@ -41,6 +47,7 @@ function App() {
         <Route path="/update-password/:token" element={<UpdatePassword />} />
 
         <Route element={<Dashboard />}>
+        
           <Route path="/dashboard/my-profile" element={<MyProfile />} />
 
           {user?.accountType === ACCOUNT_TYPE.STUDENT && (
@@ -58,6 +65,11 @@ function App() {
             user?.accountType === ACCOUNT_TYPE.INSTRUCTOR && (
               <>
                 <Route path="/dashboard/add-course" element={<AddCourse />} />
+                <Route path="/dashboard/my-courses" element={<MyCourses />} />
+                <Route path="/dashboard/edit-course/:courseId" element={<EditCourse />} />
+
+
+
               </>
             )
           }

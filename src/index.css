@@ -169,3 +169,38 @@
 .home_bg{
   background: url("../src/assets/images/bghome.svg");
 }
+/* Course Slider Styles */
+.course-slider {
+  padding: 1rem 0 3rem 0;
+}
+
+.course-slider .swiper-pagination-bullet {
+  background: #F9872C;
+  opacity: 0.3;
+}
+
+.course-slider .swiper-pagination-bullet-active {
+  background: #F9872C;
+  opacity: 1;
+}
+
+.course-slider .swiper-button-next,
+.course-slider .swiper-button-prev {
+  color: #F9872C;
+  background: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.course-slider .swiper-button-next:after,
+.course-slider .swiper-button-prev:after {
+  font-size: 16px;
+}
+
+.course-slider .swiper-button-next:hover,
+.course-slider .swiper-button-prev:hover {
+  background: #F9872C;
+  color: white;
+}

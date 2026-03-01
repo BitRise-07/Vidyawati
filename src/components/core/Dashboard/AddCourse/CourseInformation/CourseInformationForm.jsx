@@ -330,7 +330,7 @@ const CourseInformationForm = () => {
         <button
           type="submit"
           disabled={loading}
-          className={`flex-1 px-8 py-3 font-semibold rounded-xl transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-3 ${
+          className={`flex-1 px-8 py-3 font-semibold rounded-xl transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-3 cursor-pointer ${
             loading
               ? "bg-gray-300 text-gray-500 cursor-not-allowed"
               : "bg-gradient-to-r from-[#F9872C] to-orange-500 text-white hover:shadow-xl"

@@ -10,11 +10,13 @@ const store = configureStore({
   reducer: rootReducer,
 });
 import { Toaster } from "react-hot-toast"
+import ScrollToTop from "./components/common/ScrollToTop.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Provider store={store}>
       <BrowserRouter>
+      <ScrollToTop />
         <Toaster />
         <App />
       </BrowserRouter>
