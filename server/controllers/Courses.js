@@ -239,7 +239,8 @@ exports.getCourseDetails = async (req, res) => {
           path: "subSection",
         },
       })
-      .lean(); // optional but recommended
+      .populate("ratingAndReviews")
+      .lean(); 
 
     if (!courseDetails) {
       return res.status(404).json({

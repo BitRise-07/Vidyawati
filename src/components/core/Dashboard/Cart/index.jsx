@@ -20,6 +20,7 @@ const Cart = () => {
       setLoading(true);
       try {
         const cart = await getCart();
+        
         const safeCart = cart || [];
         setCartItems(safeCart);
 

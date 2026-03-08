@@ -124,9 +124,7 @@ const differentCourses =
   catalogPageData?.data?.differentCategory || [];
   const mostSelling = catalogPageData?.data?.mostSellingCourse || [];
 
-  console.log("Selected course: ", selectedCourses);
-  console.log("Different course: ", differentCourses);
-  console.log("Most selling course: ", mostSelling);
+
 
   const starterCourses = useMemo(() => {
     if (!selectedCourses?.length) return [];

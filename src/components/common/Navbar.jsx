@@ -8,6 +8,7 @@ import ProfileDropDown from "../core/Auth/ProfileDropDown";
 import { IoIosArrowDown } from "react-icons/io";
 import { FiSearch, FiMenu, FiX } from "react-icons/fi";
 import { fetchCourseCategories } from "../../services/operations/courseDetailsApi";
+import { getCart } from "../../services/operations/cartApi";
 
 const Navbar = () => {
   const { token } = useSelector((state) => state.auth);
@@ -19,6 +20,7 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [loading, setLoading] = useState(false);
+  
 
   const [subLinks, setSublinks] = useState([]);
 
@@ -26,6 +28,7 @@ const Navbar = () => {
     const getCategories = async () => {
       setLoading(true);
       const categories = await fetchCourseCategories();
+      console.log("cart: ", totalItems)
 
       if (categories.length != 0) {
         setSublinks(categories);
@@ -34,6 +37,7 @@ const Navbar = () => {
     };
     getCategories();
   }, []);
+
 
   const matchRoute = (route) => {
     return matchPath({ path: route }, location.pathname);

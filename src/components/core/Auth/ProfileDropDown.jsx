@@ -7,17 +7,23 @@ import { Link, useNavigate } from "react-router-dom"
 
 import useOnClickOutside from "../../../hooks/useOnClickOutside"
 import { logout } from "../../../services/operations/authAPI"
+import Spinner from "../../common/Spinner"
 
 export default function ProfileDropdown() {
   const { user } = useSelector((state) => state.profile)
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
-  const ref = useRef(null)
+  const ref = useRef(null);
+  const { loading: authLoading } = useSelector((state) => state.auth);
+
+  
   
 
 
   useOnClickOutside(ref, () => setOpen(false))
+
+  if (authLoading) return <Spinner />;
 
   if (!user) return null
 
@@ -65,7 +71,7 @@ export default function ProfileDropdown() {
           <div className="p-4 border-b border-gray-100">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-full bg-gradient-to-r from-[#F9872C] to-orange-500 flex items-center justify-center text-white font-bold text-lg">
-                <img className="rounded-full" src={user.image} />
+                <img className="rounded-full" src={user?.image} />
                 {!user?.image && (
                   <span>{user?.firstName?.charAt(0)}{user?.lastName?.charAt(0)}</span>
                 )}

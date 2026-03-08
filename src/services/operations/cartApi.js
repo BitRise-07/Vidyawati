@@ -8,6 +8,7 @@ const { ADD_TO_CART_API, REMOVE_FROM_CART_API, GET_ALL_CART_API, CLEAR_CART_API 
   cartEndpoints;
 
 export function addToCart(courseId) {
+  
   return async (dispatch) => {
     try {
       const response = await apiConnector("POST", ADD_TO_CART_API(courseId));
@@ -16,7 +17,7 @@ export function addToCart(courseId) {
         throw new Error(response.data.message);
       }
 
-      const cartCount = Number(response.data.cartCount) || 0;
+      const cartCount = Number(response.data.cartLength) || 0;
 
       dispatch(setTotalItems(cartCount));
       localStorage.setItem("totalItems", JSON.stringify(cartCount));
@@ -39,7 +40,7 @@ export function removeFromCart(courseId) {
         throw new Error(response.data.message);
       }
 
-      const cartCount = Number(response.data.cartCount) || 0;
+      const cartCount = Number(response.data.cartLength) || 0;
       dispatch(setTotalItems(cartCount));
       localStorage.setItem("totalItems", JSON.stringify(cartCount));
     } catch (error) {

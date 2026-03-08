@@ -38,7 +38,7 @@ const courseSchema = new mongoose.Schema(
     ],
 
     price: {
-      type: Number, // ✅ fixed
+      type: Number, 
       required: true,
     },
 
