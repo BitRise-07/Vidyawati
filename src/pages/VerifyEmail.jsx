@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import OTPInput from "react-otp-input";
 import { Link, useNavigate } from "react-router-dom";
-import { resendOtp, signup } from "../services/operations/authAPI";
+import { resendOtp, signup } from "../services/operations/authApi";
 import { FiMail, FiCheck, FiArrowLeft, FiRefreshCw, FiSend } from "react-icons/fi";
 import { BiLoaderCircle } from "react-icons/bi";
 
