@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom';
-import CTAButton from "../components/core/HomePage/Button";
-import Highlightedtext from "../components/core/HomePage/Highlightedtext";
 import { FiMail, FiCheckCircle, FiArrowLeft } from "react-icons/fi";
 import { BiLoaderCircle } from "react-icons/bi";
 import { getPasswordResetToken } from '../services/operations/authApi';
