@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { changePassword } from "../../../services/operations/authAPI";
+import { changePassword } from "../../../services/operations/authApi";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
