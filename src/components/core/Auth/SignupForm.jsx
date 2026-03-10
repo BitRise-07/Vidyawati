@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 import CTAButton from "../HomePage/Button";
 import { ACCOUNT_TYPE } from "../../../utils/constants";
 import { setSignupData } from "../../../slices/authSlice";
-import { sendOtp } from "../../../services/operations/authAPI";
+import { sendOtp } from "../../../services/operations/authApi";
 import Tab from "../../common/Tab";
 
 const SignupForm = () => {
