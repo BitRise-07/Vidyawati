@@ -11,6 +11,9 @@ import InstructorSection from "../components/core/HomePage/InstructorSection";
 import Exploremore from "../components/core/HomePage/Exploremore";
 import Footer from "../components/common/Footer";
 import { useSelector } from "react-redux";
+import StudentWithLaptop from "..//assets/images/heroimg.jpg";
+import StudentWithPhone from "..//assets/images/heroimg2.png";
+
 
 const Home = () => {
 
@@ -120,7 +123,7 @@ const Home = () => {
                 {/* Main image with cutout */}
                 <div className="relative w-95 h-130 mx-auto bg-gray-300 rounded-[3rem] overflow-hidden rotate-[-5deg] transform animate-float-medium shadow-2xl hover:rotate-0 transition-transform duration-500 group">
                   <img
-                    src="src/assets/images/heroimg.jpg"
+                    src={StudentWithLaptop}
                     alt="student with laptop"
                     className="absolute inset-0 w-full h-full object-cover rounded-2xl transition-transform duration-700 group-hover:scale-110"
                   />
@@ -141,7 +144,7 @@ const Home = () => {
                 {/* Second image */}
                 <div className="absolute bottom-[-20px] left-1/2 transform -translate-x-1/2 w-70 h-90 rounded-2xl overflow-hidden shadow-2xl rotate-[5deg] z-10 animate-float-slow hover:rotate-0 transition-transform duration-500 group">
                   <img
-                    src="src\assets\images\heroimg2.png"
+                    src={StudentWithPhone}
                     alt="student on phone"
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
