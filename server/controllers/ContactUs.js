@@ -1,4 +1,3 @@
-const { catalogData } = require("../../src/services/apis")
 const { contactUsEmail } = require("../email/templates/contactForRes")
 const mailSender = require("../utils/mailSender")
 
