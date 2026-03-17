@@ -10,19 +10,28 @@ const mailSender = async (mail, title, body) => {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS,
       },
+      tls: {
+        rejectUnauthorized: false,
+      },
     });
+
+    // ✅ ADD THIS
+    await transporter.verify()
+      .then(() => console.log("✅ SMTP Ready"))
+      .catch(err => console.log("❌ SMTP Error:", err));
 
     let info = await transporter.sendMail({
       from: `"Vidyawati" <${process.env.MAIL_USER}>`,
       to: mail,
       subject: title,
-      html: body,   
+      html: body,
     });
 
     console.log("Email sent:", info.messageId);
     return info;
+
   } catch (error) {
-    console.log("Mail error:", error.message);
+    console.log("Mail error FULL:", error);
   }
 };
 
