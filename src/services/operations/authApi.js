@@ -96,7 +96,7 @@ export const signup = (
         throw new Error("Invalid OTP");
       }
 
-      toast.success("Email Verified Successfully");
+      toast.success("Email verified! Please login.");
       setIsVerified(true);
       navigate("/login");
     } catch (error) {
