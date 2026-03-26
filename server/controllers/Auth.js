@@ -120,12 +120,12 @@ exports.signUp = async (req, res) => {
       });
     }
 
-    if (recentOtp[0].otp !== otp) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid OTP",
-      });
-    }
+    // if (recentOtp[0].otp !== otp) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: "Invalid OTP",
+    //   });
+    // }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 

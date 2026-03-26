@@ -139,7 +139,7 @@ const VerifyEmail = () => {
             Verify Your Email
           </h1>
           <p className="text-vd-txt">
-            Enter the 6-digit code sent to your email
+            Enter any 6-digit code 
           </p>
         </div>
 
@@ -194,7 +194,7 @@ const VerifyEmail = () => {
               <form onSubmit={handleOnSubmit} onKeyDown={handleKeyDown}>
                 <div className="mb-8">
                   <label className="block text-vd-secondary font-medium mb-4 text-center">
-                    Enter 6-digit verification code
+                    Enter any 6-digit verification code
                   </label>
 
                   <div className="flex justify-center mb-6">
