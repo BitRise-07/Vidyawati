@@ -49,6 +49,15 @@ app.use("/api/v1/payment", paymentRoutes);
 app.use("/api/v1/reach", contactRoutes);
 app.use("/api/v1/cart", cartRoutes);
 
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    uptime: process.uptime(),
+    message: "Server is running",
+    timestamp: new Date()
+  });
+});
+
 // Default route
 app.use("/", (req, res) => {
   return res.json({
