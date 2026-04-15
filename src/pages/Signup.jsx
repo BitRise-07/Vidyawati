@@ -8,7 +8,7 @@ const Signup = () => {
       title={
         <>
           Join the millions learning to<br />
-          code with <span className="text-vd-primary">StudyNotion</span> for free
+          code with <span className="text-vd-primary">Vidyawati</span> for free
         </>
       }
       desc1="Build skills for today, tomorrow, and beyond."
