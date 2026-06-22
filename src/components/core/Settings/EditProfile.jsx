@@ -100,7 +100,7 @@ const EditProfile = () => {
   };
 
   return (
-    <div className="animate-fade-in-up  pr-20 bg-orange-50 ">
+    <div className="animate-fade-in-up bg-orange-50">
       {/* Header */}
       <div className="mb-10">
         <h1 className="text-3xl font-bold text-vd-secondary mb-2">
@@ -109,7 +109,7 @@ const EditProfile = () => {
       </div>
 
       {/* Profile Photo */}
-      <div className="flex items-center gap-6 mb-1 bg-white rounded-xl shadow-sm border border-gray-200 p-8 ">
+      <div className="mb-4 flex flex-col gap-5 rounded-xl border border-gray-200 bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:p-8">
         <div
           onClick={handleProfileImageClick}
           className="relative w-28 h-28 rounded-full bg-gray-100 border border-dashed border-gray-300 cursor-pointer overflow-hidden"
@@ -143,7 +143,7 @@ const EditProfile = () => {
       {/* FORM CARD */}
       <form
         onSubmit={handleSubmit(submitProfileForm)}
-        className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 space-y-8"
+        className="space-y-8 rounded-xl border border-gray-200 bg-white p-5 shadow-sm sm:p-8"
       >
         {/* First & Last Name */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

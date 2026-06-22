@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const mailSender = require("../utils/mailSender");
+const { passwordUpdate } = require("../email/templates/passwordUpdate");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 
@@ -26,8 +27,8 @@ exports.resetPasswordToken = async (req, res) => {
         user.resetPasswordExpires = Date.now() + 5 * 60 * 1000;
         await user.save({ validateBeforeSave: false });
 
-        // Create password reset URL
-        const url = `http://localhost:5173/update-password/${hashedToken}`;
+        const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
+        const url = `${clientUrl.replace(/\/$/, "")}/update-password/${resetToken}`;
 
         // Send email
         await mailSender(email, "Password Reset Link", `Click here to reset your password: ${url}`);
@@ -58,15 +59,13 @@ exports.resetPassword = async (req, res) => {
             });
         }
 
-        // Hash token from request to match stored hashed token
         const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
     
         // Find user with valid token and not expired
         const userDetails = await User.findOne({
-            token: token,
+            token: hashedToken,
             resetPasswordExpires: { $gt: Date.now() }
         });
-        console.log(userDetails)
 
         if (!userDetails) {
             return res.json({
@@ -83,6 +82,12 @@ exports.resetPassword = async (req, res) => {
         userDetails.token = undefined;
         userDetails.resetPasswordExpires = undefined;
         await userDetails.save();
+
+        await mailSender(
+            userDetails.email,
+            "Your Vidyawati password was updated",
+            passwordUpdate(`${userDetails.firstName} ${userDetails.lastName}`)
+        );
 
         return res.status(200).json({
             success: true,

@@ -3,6 +3,7 @@ const Section = require("../models/Section");
 const SubSection = require("../models/SubSection");
 const User = require("../models/User");
 const Category = require("../models/Category");
+const CourseProgress = require("../models/CourseProgress");
 const { uploadImageToCloudinary } = require("../utils/imageUploader");
 
 exports.createCourse = async (req, res) => {
@@ -26,10 +27,6 @@ exports.createCourse = async (req, res) => {
     // Convert the tag and instructions from stringified Array to Array
     const tag = JSON.parse(_tag)
     const instructions = JSON.parse(_instructions);
-
-    console.log(courseName, courseDescription, whatYouWillLearn, price, tag, category, status, instructions)
-
-
 
     // Check if any of the required fields are missing
     if (
@@ -75,7 +72,6 @@ exports.createCourse = async (req, res) => {
       thumbnail,
       process.env.FOLDER_NAME
     )
-    console.log(thumbnailImage)
     // Create a new course with the given details
     const newCourse = await Course.create({
       courseName,
@@ -260,6 +256,137 @@ exports.getCourseDetails = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Something went wrong while fetching course details",
+      error: error.message,
+    });
+  }
+};
+
+exports.getFullCourseDetails = async (req, res) => {
+  try {
+    const { courseId } = req.body;
+    const userId = req.user.id;
+
+    if (!courseId) {
+      return res.status(400).json({
+        success: false,
+        message: "Course ID is required",
+      });
+    }
+
+    const courseDetails = await Course.findOne({
+      _id: courseId,
+      studentsEnrolled: userId,
+    })
+      .populate({
+        path: "instructor",
+        select: "-password -__v -token -resetPasswordExpires",
+        populate: {
+          path: "additionalDetail",
+        },
+      })
+      .populate("category")
+      .populate({
+        path: "courseContent",
+        populate: {
+          path: "subSection",
+        },
+      })
+      .populate("ratingAndReviews")
+      .lean();
+
+    if (!courseDetails) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not enrolled in this course",
+      });
+    }
+
+    const progress = await CourseProgress.findOneAndUpdate(
+      { userId, courseID: courseId },
+      { $setOnInsert: { userId, courseID: courseId, completedVideos: [] } },
+      { new: true, upsert: true }
+    ).lean();
+
+    return res.status(200).json({
+      success: true,
+      message: "Full course details fetched successfully",
+      data: {
+        ...courseDetails,
+        completedVideos: progress?.completedVideos || [],
+      },
+    });
+  } catch (error) {
+    console.error("GET FULL COURSE DETAILS ERROR:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong while fetching course content",
+      error: error.message,
+    });
+  }
+};
+
+exports.updateCourseProgress = async (req, res) => {
+  try {
+    const { courseId, subSectionId } = req.body;
+    const userId = req.user.id;
+
+    if (!courseId || !subSectionId) {
+      return res.status(400).json({
+        success: false,
+        message: "Course ID and lecture ID are required",
+      });
+    }
+
+    const course = await Course.findOne({
+      _id: courseId,
+      studentsEnrolled: userId,
+    })
+      .populate({
+        path: "courseContent",
+        populate: {
+          path: "subSection",
+          select: "_id",
+        },
+      })
+      .lean();
+
+    if (!course) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not enrolled in this course",
+      });
+    }
+
+    const lectureBelongsToCourse = course.courseContent?.some((section) =>
+      section.subSection?.some((lecture) => String(lecture._id) === String(subSectionId))
+    );
+
+    if (!lectureBelongsToCourse) {
+      return res.status(400).json({
+        success: false,
+        message: "Lecture does not belong to this course",
+      });
+    }
+
+    const progress = await CourseProgress.findOneAndUpdate(
+      { userId, courseID: courseId },
+      {
+        $setOnInsert: { userId, courseID: courseId },
+        $addToSet: { completedVideos: subSectionId },
+      },
+      { new: true, upsert: true }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Lecture marked as completed",
+      data: progress,
+    });
+  } catch (error) {
+    console.error("UPDATE COURSE PROGRESS ERROR:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Could not update course progress",
       error: error.message,
     });
   }

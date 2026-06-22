@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Footer from "../components/common/Footer";
 import { useParams, Link } from "react-router-dom";
-import { fetchCourseCategories } from "../services/operations/courseDetailsApi";
+import { fetchCourseCategories, getAllCourses } from "../services/operations/courseDetailsApi";
 import getCatalogPageData from "../services/operations/pageAndComponentData";
 import Course_Card from "../components/core/Catalog/Course_Card";
 import { useMemo } from "react";
@@ -77,6 +77,7 @@ const EmptyState = ({ message }) => (
 const Catalog = () => {
   const { catalogName } = useParams();
   const [catalogPageData, setCatalogPageData] = useState(null);
+  const [allCourses, setAllCourses] = useState([]);
   const [categoryId, setCategoryId] = useState("");
   const [starterTab, setStarterTab] = useState("All");
   const [loading, setLoading] = useState(true);
@@ -85,6 +86,14 @@ const Catalog = () => {
     const getCategories = async () => {
       setLoading(true);
       try {
+        if (!catalogName) {
+          const courses = await getAllCourses();
+          setAllCourses(courses || []);
+          setCatalogPageData(null);
+          setCategoryId("");
+          return;
+        }
+
         const res = await fetchCourseCategories();
         const category_id = res?.filter(
           (ct) => ct.name.split(" ").join("-").toLowerCase() === catalogName,
@@ -111,18 +120,28 @@ const Catalog = () => {
     if (categoryId) getCategoryDetails();
   }, [categoryId]);
 
-  const categoryName =
-    catalogPageData?.data?.selectedCategory?.name ||
-    catalogName
-      ?.split("-")
-      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(" ");
+  const categoryName = !catalogName
+    ? "All Courses"
+    : catalogPageData?.data?.selectedCategory?.name ||
+      catalogName
+        ?.split("-")
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(" ");
 
 
-  const selectedCourses = catalogPageData?.data?.selectedCategory?.courses || [];
-const differentCourses =
-  catalogPageData?.data?.differentCategory || [];
-  const mostSelling = catalogPageData?.data?.mostSellingCourse || [];
+  const selectedCourses = !catalogName
+    ? allCourses
+    : catalogPageData?.data?.selectedCategory?.courses || [];
+  const differentCourses = !catalogName
+    ? allCourses.slice(3, 12)
+    : catalogPageData?.data?.differentCategory || [];
+  const mostSelling = !catalogName
+    ? [...allCourses].sort(
+        (a, b) =>
+          (b.studentsEnrolled?.length || 0) -
+          (a.studentsEnrolled?.length || 0),
+      )
+    : catalogPageData?.data?.mostSellingCourse || [];
 
 
 
@@ -151,7 +170,7 @@ const differentCourses =
   }, [starterTab, selectedCourses]);
 
   if (loading) {
-    <Spinner />;
+    return <Spinner />;
   }
 
   return (

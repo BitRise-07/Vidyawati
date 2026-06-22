@@ -114,7 +114,7 @@ function CourseDetailsCard({ course, setConfirmationModal, handleBuyCourse, tota
 
         {/* CTA button */}
         <button
-          onClick={isEnrolled ? () => navigate("/dashboard/enrolled-courses") : handleAddToCart}
+          onClick={isEnrolled ? () => navigate(`/view-course/${_id}`) : handleAddToCart}
           className="w-full py-3 bg-vd-primary hover:bg-vd-secondary text-white font-bold rounded-xl transition-all duration-200 hover:shadow-lg text-sm mb-3 cursor-pointer"
         >
           {isEnrolled ? "Go to Course" : "Add To Cart"}

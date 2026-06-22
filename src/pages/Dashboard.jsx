@@ -16,11 +16,11 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="relative flex min-h-screen bg-orange-50 ">
+    <div className="relative min-h-[calc(100vh-64px)] bg-orange-50">
       <Sidebar />
 
-      <div className="flex-1 h-screen overflow-auto">
-        <div className="mx-auto  w-11/12 py-10 pl-70">
+      <div className="w-full lg:pl-[280px]">
+        <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <Outlet />
         </div>
       </div>

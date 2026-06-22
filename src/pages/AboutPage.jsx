@@ -202,7 +202,7 @@ const AboutPage = () => {
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 <Button
                   variant="primary"
-                  linkTo="/course"
+                  linkTo="/courses"
                   className="px-6 py-3 text-base font-semibold"
                 >
                   Explore Courses →
@@ -560,7 +560,7 @@ const AboutPage = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               variant="secondary"
-              linkTo="/course"
+              linkTo="/courses"
               className="px-6 py-3 text-base font-semibold"
             >
               Explore Courses

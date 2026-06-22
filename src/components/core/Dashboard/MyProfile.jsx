@@ -307,7 +307,7 @@ const MyProfile = () => {
               </button>
 
               <button
-                onClick={() => navigate("/dashboard/settings/change-password")}
+                onClick={() => navigate("/settings/change-password")}
                 className="w-full text-left px-4 py-3 rounded-lg border border-[#f1f5f9] hover:shadow-md transition flex items-center gap-3"
               >
                 <FaLockIconPlaceholder />

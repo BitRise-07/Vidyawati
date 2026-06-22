@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom';
 import RenderSteps from "./AddCourse/RenderSteps";
 import Spinner from "../../common/Spinner";
-import { getFullDetailsOfCourse } from '../../../services/operations/courseDetailsApi';
+import { fetchCourseDetails } from '../../../services/operations/courseDetailsApi';
 import { setCourse, setEditCourse } from '../../../slices/courseSlice';
 
 const EditCourse = () => {
@@ -14,19 +14,18 @@ const EditCourse = () => {
     const [loading, setLoading] = React.useState(false);
 
     useEffect(() =>{
-        const fetchCourseDetails = async () => {
+        const loadCourseDetails = async () => {
             setLoading(true);
-            const result = await getFullDetailsOfCourse(courseId);
+            const result = await fetchCourseDetails(courseId);
 
-            if(result){
+            if(result?.success){
                 dispatch(setEditCourse(true));
-                dispatch(setCourse(result));
+                dispatch(setCourse(result.data));
             }
-            console.log("Course: ", course);
             setLoading(false);
         }
 
-        fetchCourseDetails();
+        loadCourseDetails();
 
 
     }, [])

@@ -18,11 +18,11 @@ const Setting = () => {
       }
 
   return (
-    <div className="flex w-max-11/12  min-h-screen bg-orange-50 no-scrollbar overflow-y-auto">
+    <div className="relative min-h-[calc(100vh-64px)] bg-orange-50">
       <SidebarSetting />
 
-      <div className="flex-1 bg-orange-50">
-        <div className="mx-auto w-11/12 max-w-[1200px] py-10">
+      <div className="w-full lg:pl-[340px]">
+        <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <Outlet />
         </div>
       </div>

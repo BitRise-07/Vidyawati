@@ -18,6 +18,11 @@ const fileUpload = require("express-fileupload");
 
 dotenv.config();
 const PORT = process.env.PORT || 4000;
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  "https://vidyawati.vercel.app",
+  "http://localhost:5173",
+].filter(Boolean);
 
 database.connect();
 
@@ -26,7 +31,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ["https://vidyawati.vercel.app", "http://localhost:5173"],
+    origin: allowedOrigins,
     credentials: true,
   })
 );

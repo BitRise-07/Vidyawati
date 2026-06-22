@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { getUserEnrolledCourses } from "../../../services/operations/profileApi";
 import ProgressBar from "@ramonak/react-progress-bar";
 import { FaBookOpen, FaClock, FaPlay, FaGraduationCap, FaChevronRight } from "react-icons/fa";
+import { formatDuration } from "../../../utils/dateFormatter";
 
 /* ─── Skeleton loader for a single row ─────────────── */
 const SkeletonRow = () => (
@@ -107,11 +108,15 @@ const EnrolledCourses = () => {
             {enrolledCourses.map((course, index) => {
               const progress = course.progressPercentage || 0;
               const isComplete = progress === 100;
+              const courseDuration = course?.totalDuration
+                ? formatDuration(course.totalDuration)
+                : "—";
 
               return (
                 <div
                   key={index}
-                  className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center px-6 py-4 hover:bg-orange-50/30 transition-colors duration-150 group"
+                  onClick={() => navigate(`/view-course/${course._id}`)}
+                  className="grid cursor-pointer grid-cols-1 items-center gap-4 px-4 py-4 transition-colors duration-150 hover:bg-orange-50/30 group sm:px-6 md:grid-cols-12"
                 >
                   {/* ── Course info ── */}
                   <div className="md:col-span-6 flex items-center gap-4">
@@ -132,7 +137,6 @@ const EnrolledCourses = () => {
                     <div className="min-w-0">
                       <p
                         className="text-sm font-bold text-slate-800 truncate group-hover:text-[#F9872C] transition-colors duration-200 cursor-pointer"
-                        onClick={() => navigate(`/view-course/${course._id}`)}
                       >
                         {course?.courseName}
                       </p>
@@ -143,7 +147,7 @@ const EnrolledCourses = () => {
                       <div className="flex items-center gap-2 mt-1.5 md:hidden">
                         <span className="flex items-center gap-1 text-[10px] text-slate-400">
                           <FaClock className="text-blue-400 text-[9px]" />
-                          {course?.totalDuration || "—"}
+                          {courseDuration}
                         </span>
                         <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-md ${
                           isComplete ? "bg-emerald-50 text-emerald-600" : "bg-orange-50 text-orange-500"
@@ -158,7 +162,7 @@ const EnrolledCourses = () => {
                   <div className="md:col-span-2 hidden md:flex items-center justify-center gap-1.5">
                     <FaClock className="text-blue-400 text-[11px] shrink-0" />
                     <span className="text-xs font-medium text-slate-500">
-                      {course?.totalDuration || "—"}
+                      {courseDuration}
                     </span>
                   </div>
 

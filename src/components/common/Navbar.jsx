@@ -28,7 +28,6 @@ const Navbar = () => {
     const getCategories = async () => {
       setLoading(true);
       const categories = await fetchCourseCategories();
-      console.log("cart: ", totalItems)
 
       if (categories.length != 0) {
         setSublinks(categories);
@@ -142,7 +141,7 @@ const Navbar = () => {
                           </div>
                           <div className="mt-4 pt-4 border-t border-gray-100">
                             <Link
-                              to="/catalog"
+                              to="/courses"
                               className="block w-full text-center bg-gradient-to-r from-[#F9872C] to-orange-500 text-white py-2 px-4 rounded-lg font-semibold hover:shadow-lg transition-all duration-300"
                             >
                               View All Courses

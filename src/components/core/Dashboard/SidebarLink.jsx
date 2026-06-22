@@ -3,7 +3,7 @@ import * as FaIcons from "react-icons/fa";
 import * as VscIcons from "react-icons/vsc";
 import { NavLink, useLocation, matchPath } from "react-router-dom";
 
-const SidebarLink = ({ link, iconName }) => {
+const SidebarLink = ({ link, iconName, compact = false }) => {
   const Icon = FaIcons[iconName] || VscIcons[iconName];
   const location = useLocation();
 
@@ -15,8 +15,9 @@ const SidebarLink = ({ link, iconName }) => {
     <NavLink
       to={link.path}
       className={`
-        group flex items-center gap-4 px-4 py-3 rounded-xl
+        group flex items-center gap-3 rounded-xl
         transition-all duration-300
+        ${compact ? "min-w-max px-3 py-2" : "px-4 py-3"}
         ${
           isActive
             ? "bg-white/10 text-white shadow-[0_6px_20px_rgba(0,0,0,0.35)]"
@@ -27,8 +28,9 @@ const SidebarLink = ({ link, iconName }) => {
       {/* ICON */}
       <div
         className={`
-          w-10 h-10 rounded-lg flex items-center justify-center
+          rounded-lg flex items-center justify-center
           transition-all duration-300
+          ${compact ? "h-8 w-8" : "w-10 h-10"}
           ${
             isActive
               ? "bg-gradient-to-r from-[#f9872c] to-orange-500 shadow-md"
@@ -40,10 +42,10 @@ const SidebarLink = ({ link, iconName }) => {
       </div>
 
       {/* TEXT */}
-      <span className="font-medium tracking-wide">{link.name}</span>
+      <span className={`${compact ? "text-sm" : ""} font-medium tracking-wide`}>{link.name}</span>
 
       {/* ACTIVE DOT */}
-      {isActive && (
+      {isActive && !compact && (
         <span className="ml-auto w-2 h-2 rounded-full bg-orange-400 animate-pulse" />
       )}
     </NavLink>

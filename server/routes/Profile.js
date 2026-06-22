@@ -17,6 +17,7 @@ router.put("/updateprofile", auth, updateProfile);
 
 // Get current logged-in user profile
 router.get("/me", auth, getUserDetails);
+router.get("/getUserDetails", auth, getUserDetails);
 
 // Get all profiles (Admin only)
 router.get("/all", auth, isAdmin, getAllProfiles);

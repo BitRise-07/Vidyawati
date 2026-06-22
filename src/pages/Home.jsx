@@ -13,6 +13,9 @@ import Footer from "../components/common/Footer";
 import { useSelector } from "react-redux";
 import StudentWithLaptop from "..//assets/images/heroimg.jpg";
 import StudentWithPhone from "..//assets/images/heroimg2.png";
+import Spinner from "../components/common/Spinner";
+import { useNavigate } from "react-router-dom";
+
 
 
 const Home = () => {
@@ -21,6 +24,9 @@ const Home = () => {
   const { user, loading: profileLoading } = useSelector(
     (state) => state.profile
   );
+  const navigate = useNavigate();
+
+
 
   if (authLoading || profileLoading) {
     return <Spinner />;
@@ -31,8 +37,7 @@ const Home = () => {
   // Technical course categories
   const categories = categoriesData;
   const handleCategoryClick = (categoryName) => {
-    console.log(`Category clicked: ${categoryName}`);
-    // You can add navigation or state management here
+    navigate(`/catalog/${categoryName.toLowerCase()}`);
   };
 
   return (
@@ -253,7 +258,7 @@ const Home = () => {
           <div className="text-center mt-12 animate-fade-in-up">
             <CTAButton
               variant="secondary"
-              linkTo="/categories"
+              linkTo="/courses"
               className="px-8 py-3"
             >
               View All Categories
@@ -331,7 +336,7 @@ const Home = () => {
           ctabtn1={{
             text: "Continue Lesson",
             variant: "primary",
-            linkTo: "/lesson",
+            linkTo: "/courses",
             className: "px-8 py-4 text-lg",
           }}
           ctabtn2={{

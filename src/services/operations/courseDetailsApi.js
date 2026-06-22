@@ -57,7 +57,10 @@ export const fetchCourseDetails = async (courseId) => {
     result = response.data;
   } catch (error) {
     console.log("COURSE_DETAILS_API API ERROR", error)
-    result = error.response.data
+    result = error.response?.data || {
+      success: false,
+      message: "Could not fetch course details",
+    }
     // toast.error(error.response.data.message);
   }
   toast.dismiss(toastId)
@@ -296,7 +299,10 @@ export const getFullDetailsOfCourse = async (courseId) => {
     result = response?.data?.data
   } catch (error) {
     console.log("COURSE_FULL_DETAILS_API API ERROR", error)
-    result = error.response.data
+    result = error.response?.data || {
+      success: false,
+      message: "Could not fetch course content",
+    }
     // toast.error(error.response.data.message);
   }
   toast.dismiss(toastId)
@@ -307,14 +313,13 @@ export const getFullDetailsOfCourse = async (courseId) => {
 // mark a lecture as complete
 export const markLectureAsComplete = async (data) => {
   let result = null
-  console.log("mark complete data", data)
   const toastId = toast.loading("Loading...")
   try {
     const response = await apiConnector("POST", LECTURE_COMPLETION_API, data, )
    
 
-    if (!response.data.message) {
-      throw new Error(response.data.error)
+    if (!response.data.success) {
+      throw new Error(response.data.message || response.data.error)
     }
     toast.success("Lecture Completed")
     result = true

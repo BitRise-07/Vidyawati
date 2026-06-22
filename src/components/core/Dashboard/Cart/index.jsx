@@ -59,7 +59,7 @@ const Cart = () => {
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 px-12">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           {/* Cart Items */}
           <div className="lg:col-span-2">
             <div className="flex items-center justify-between mb-6">
@@ -71,7 +71,7 @@ const Cart = () => {
                   dispatch(clearCart());
                   setCartItems([]);
                 }}
-                className="text-sm text-red-500 hover:text-vd-secondary cursor-pointer font-medium transition-colors duration-300 pr-15"
+                className="cursor-pointer text-sm font-medium text-red-500 transition-colors duration-300 hover:text-vd-secondary"
               >
                 Clear All
               </button>

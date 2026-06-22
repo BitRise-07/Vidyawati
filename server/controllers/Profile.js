@@ -1,6 +1,7 @@
 const Profile = require("../models/Profile");
 const User = require("../models/User");
 const Course = require("../models/Course");
+const CourseProgress = require("../models/CourseProgress");
 const { uploadImageToCloudinary } = require("../utils/imageUploader");
 const mongoose = require("mongoose");
 
@@ -140,15 +141,16 @@ exports.deleteUser = async (req, res) => {
     }
     // Delete Assosiated Profile with the User
     await Profile.findByIdAndDelete({
-      _id: new mongoose.Types.ObjectId(user.additionalDetails),
+      _id: new mongoose.Types.ObjectId(user.additionalDetail),
     });
     for (const courseId of user.courses) {
       await Course.findByIdAndUpdate(
         courseId,
-        { $pull: { studentsEnroled: id } },
+        { $pull: { studentsEnrolled: id } },
         { new: true }
       );
     }
+    await CourseProgress.deleteMany({ userId: id });
     // Now Delete User
     await User.findByIdAndDelete({ _id: id });
     res.status(200).json({
@@ -166,7 +168,13 @@ exports.deleteUser = async (req, res) => {
 // ✅ Update profile picture
 exports.updateDisplayPicture = async (req, res) => {
   try {
-    const displayPicture = req.files.displayPicture;
+    const displayPicture = req.files?.displayPicture;
+    if (!displayPicture) {
+      return res.status(400).json({
+        success: false,
+        message: "Display picture is required",
+      });
+    }
 
     const userId = req.user.id;
     const image = await uploadImageToCloudinary(
@@ -217,9 +225,44 @@ exports.getEnrolledCourses = async (req, res) => {
       });
     }
 
+    const progressRecords = await CourseProgress.find({
+      userId,
+      courseID: { $in: userDetail.courses.map((course) => course._id) },
+    }).lean();
+
+    const progressByCourse = new Map(
+      progressRecords.map((progress) => [
+        String(progress.courseID),
+        progress.completedVideos?.map((lectureId) => String(lectureId)) || [],
+      ])
+    );
+
+    const coursesWithProgress = (userDetail.courses || []).map((course) => {
+      const courseObject = course.toObject();
+      const lectures =
+        courseObject.courseContent?.flatMap((section) => section.subSection || []) || [];
+      const totalLectures = lectures.length;
+      const completedVideos = progressByCourse.get(String(courseObject._id)) || [];
+      const progressPercentage = totalLectures
+        ? Math.round((completedVideos.length / totalLectures) * 100)
+        : 0;
+      const totalSeconds = lectures.reduce(
+        (total, lecture) => total + (Number(lecture.timeDuration) || 0),
+        0
+      );
+
+      return {
+        ...courseObject,
+        completedVideos,
+        progressPercentage,
+        totalDuration: totalSeconds,
+        totalLectures,
+      };
+    });
+
     return res.status(200).json({
       success: true,
-      data: userDetail.courses ?? [],
+      data: coursesWithProgress,
     });
   } catch (error) {
     return res.status(500).json({

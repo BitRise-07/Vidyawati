@@ -12,6 +12,8 @@ const {
   createCourse,
   showAllCourses,
   getCourseDetails,
+  getFullCourseDetails,
+  updateCourseProgress,
   editCourse,
   getInstructorCourses,
   deleteCourse,
@@ -38,6 +40,8 @@ router.post("/createCourse", auth, isInstructor, createCourse);
 router.post("/editCourse", auth, isInstructor, editCourse);
 router.delete("/deleteCourse", auth, isInstructor, deleteCourse );
 router.post("/getCourseDetails", getCourseDetails);
+router.post("/getFullCourseDetails", auth, isStudent, getFullCourseDetails);
+router.post("/updateCourseProgress", auth, isStudent, updateCourseProgress);
 router.get("/getInstructorCourses", auth, isInstructor, getInstructorCourses);
 router.get("/getAllCourses", showAllCourses);
 router.post("/addSection", auth, isInstructor, createSection);

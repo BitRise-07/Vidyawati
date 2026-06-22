@@ -115,18 +115,20 @@ export default function ProfileDropdown() {
             </Link>
 
             <Link 
-              to="/dashboard/my-courses" 
+              to={user?.accountType === "Instructor" ? "/dashboard/my-courses" : "/dashboard/enrolled-courses"} 
               onClick={() => setOpen(false)}
               className="flex items-center gap-3 px-4 py-3 hover:bg-orange-50 transition-colors duration-200 group/item"
             >
               <div className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center text-purple-600 group-hover/item:bg-purple-500 group-hover/item:text-white transition-colors duration-200">
                 <FiBookOpen className="text-sm" />
               </div>
-              <span className="font-medium text-vd-secondary group-hover/item:text-vd-primary">My Courses</span>
+              <span className="font-medium text-vd-secondary group-hover/item:text-vd-primary">
+                {user?.accountType === "Instructor" ? "My Courses" : "Enrolled Courses"}
+              </span>
             </Link>
 
             <Link 
-              to="settings/edit-profile" 
+              to="/settings/edit-profile" 
               onClick={() => setOpen(false)}
               className="flex items-center gap-3 px-4 py-3 hover:bg-orange-50 transition-colors duration-200 group/item"
             >

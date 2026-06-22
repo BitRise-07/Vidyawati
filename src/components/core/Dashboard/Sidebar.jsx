@@ -21,8 +21,24 @@ const Sidebar = () => {
     return <Spinner />;
   }
 
+  const visibleLinks = sidebarLinks.filter((link) => !link.type || user?.accountType === link.type);
+
   return (
-    <div className="relative">
+    <>
+      <nav className="sticky top-16 z-30 border-b border-orange-100 bg-white/95 px-4 py-3 shadow-sm backdrop-blur lg:hidden">
+        <div className="flex gap-2 overflow-x-auto pb-1">
+          {visibleLinks.map((link) => (
+            <SidebarLink key={link.id} link={link} iconName={link.icon} compact />
+          ))}
+          <SidebarLink
+            link={{ name: "Settings", path: "/settings/edit-profile" }}
+            iconName="FaCog"
+            compact
+          />
+        </div>
+      </nav>
+
+      <div className="relative hidden lg:block">
       <aside
         className="
           w-[280px]
@@ -59,16 +75,13 @@ const Sidebar = () => {
 
         {/* LINKS (SCROLLABLE) */}
         <div className="flex-1 overflow-y-auto px-4 py-4 space-y-1 scrollbar-thin scrollbar-thumb-orange-400/40 scrollbar-track-transparent">
-          {sidebarLinks.map((link) => {
-            if (link.type && user?.accountType !== link.type) return null;
-            return (
+          {visibleLinks.map((link) => (
               <SidebarLink
                 key={link.id}
                 link={link}
                 iconName={link.icon}
               />
-            );
-          })}
+          ))}
         </div>
 
         {/* FOOTER */}
@@ -104,6 +117,7 @@ const Sidebar = () => {
 
       {confirmationModal && <ConfirmationModal modalData={confirmationModal} />}
     </div>
+    </>
   );
 };
 

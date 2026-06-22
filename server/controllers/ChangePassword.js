@@ -1,5 +1,7 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
+const mailSender = require("../utils/mailSender");
+const { passwordUpdate } = require("../email/templates/passwordUpdate");
 
 exports.changePassword = async (req, res) => {
   try {
@@ -37,6 +39,12 @@ exports.changePassword = async (req, res) => {
     const hashedNewPassword = await bcrypt.hash(newPassword, 10);
     user.password = hashedNewPassword;
     await user.save();
+
+    await mailSender(
+      user.email,
+      "Your Vidyawati password was updated",
+      passwordUpdate(`${user.firstName} ${user.lastName}`)
+    );
 
     return res.status(200).json({
       success: true,

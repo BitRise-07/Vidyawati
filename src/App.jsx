@@ -28,15 +28,19 @@ import EditCourse from "./components/core/Dashboard/EditCourse";
 import Catalog from "./pages/Catalog";
 import ScrollToTop from "./components/common/ScrollToTop";
 import CourseDetails from "./pages/CourseDetails";
+import ViewCourse from "./pages/ViewCourse";
+import StaticPage from "./pages/StaticPage";
+import SettingsInfoPage from "./components/core/Settings/SettingsInfoPage";
 
 function App() {
   const { user } = useSelector((state) => state.profile);
   return (
-    <div className="w-screen min-h-screen bg-white flex flex-col font-inter ">
+    <div className="w-full min-h-screen bg-white flex flex-col font-inter">
       <Navbar />
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/courses" element={<Catalog />} />
         <Route path="catalog/:catalogName" element={<Catalog />} />
         <Route path="/courses/:courseId" element={<CourseDetails />} />
         <Route path="/about" element={<AboutPage />} />
@@ -48,7 +52,13 @@ function App() {
 
         <Route path="/update-password/:token" element={<UpdatePassword />} />
 
-        <Route element={<Dashboard />}>
+        <Route
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        >
         
           <Route path="/dashboard/my-profile" element={<MyProfile />} />
 
@@ -76,13 +86,31 @@ function App() {
             )
           }
         </Route>
-        <Route element={<Setting />}>
+        <Route
+          element={
+            <PrivateRoute>
+              <Setting />
+            </PrivateRoute>
+          }
+        >
           <Route path="settings/edit-profile" element={<EditProfile />} />
           <Route
             path="settings/change-password"
             element={<ChangePasswword />}
           />
+          <Route path="settings/:settingSlug" element={<SettingsInfoPage />} />
         </Route>
+
+        <Route
+          path="/view-course/:courseId"
+          element={
+            <PrivateRoute>
+              <ViewCourse />
+            </PrivateRoute>
+          }
+        />
+
+        <Route path="/:slug" element={<StaticPage />} />
 
         <Route path="*" element={<Error />} />
       </Routes>

@@ -155,24 +155,22 @@ function CourseDetails() {
             </div>
 
             {/* Right — course card (desktop, overlapping hero) */}
-            <div className="hidden lg:block relative">
-  <div className="absolute right-0  w-[340px]">
-    <CourseDetailsCard
-      course={response?.data}
-      setConfirmationModal={setConfirmationModal}
-      handleBuyCourse={handleBuyCourse}
-      totalDuration={response.data?.totalDuration}
-      totalLectures={totalNoOfLectures}
-    />
-  </div>
-</div>
+            <div className="hidden lg:block">
+              <CourseDetailsCard
+                course={response?.data}
+                setConfirmationModal={setConfirmationModal}
+                handleBuyCourse={handleBuyCourse}
+                totalDuration={response.data?.totalDuration}
+                totalLectures={totalNoOfLectures}
+              />
+            </div>
           </div>
         </div>
       </div>
 
       {/* ── Main content ── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 ">
-        <div className="grid lg:grid-cols-[1fr_340px] gap-10">
+        <div className="grid gap-10">
           {/* Left */}
           <div>
             {/* Tab bar */}
@@ -270,14 +268,10 @@ function CourseDetails() {
             />
           </div>
 
-          {/* Desktop: empty spacer (card is in hero) */}
-          <div className="hidden lg:block" />
         </div>
       </div>
 
-     <div className="mt-100">
-       <Footer  />
-     </div>
+      <Footer />
       {confirmationModal && <ConfirmationModal modalData={confirmationModal} />}
     </div>
   )

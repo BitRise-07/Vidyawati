@@ -73,7 +73,7 @@ const ChangePassword = () => {
   };
 
   return (
-    <div className="w-11/12 pr-10 mx-auto animate-fade-in-up">
+    <div className="mx-auto w-full animate-fade-in-up">
       {/* Page Header */}
       <div className="mb-10">
         <h1 className="text-4xl font-bold text-vd-secondary mb-2">
@@ -83,7 +83,7 @@ const ChangePassword = () => {
       </div>
 
       {/* Page Section */}
-      <div className="bg-white rounded-2xl border border-orange-100 shadow-[0_18px_40px_rgba(25,47,89,0.1)] p-10">
+      <div className="rounded-2xl border border-orange-100 bg-white p-5 shadow-[0_18px_40px_rgba(25,47,89,0.1)] sm:p-8 lg:p-10">
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Current Password */}
           <div>

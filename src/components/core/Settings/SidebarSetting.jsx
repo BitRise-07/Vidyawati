@@ -4,8 +4,28 @@ import { settingMoreLinks } from "../../../data/setting-links";
 import { FaCog } from "react-icons/fa";
 
 const SidebarSetting = () => {
+  const primaryLinks = [
+    { name: "Edit profile", path: "/settings/edit-profile", icon: "FaUser" },
+    { name: "Profile Health", path: "/settings/profile-health", icon: "FaHeart" },
+    { name: "Change password", path: "/settings/change-password", icon: "FaLock" },
+  ];
+
   return (
-    <div className="h-screen flex items-start pt-[120px] pl-24">
+    <>
+    <nav className="sticky top-16 z-30 border-b border-orange-100 bg-white/95 px-4 py-3 shadow-sm backdrop-blur lg:hidden">
+      <div className="flex gap-2 overflow-x-auto pb-1">
+        {[...primaryLinks, ...settingMoreLinks].map((link) => (
+          <SettingSidebarLinks
+            key={link.path}
+            link={{ name: link.name, path: link.path }}
+            iconName={link.icon}
+            compact
+          />
+        ))}
+      </div>
+    </nav>
+
+    <div className="fixed left-6 top-[96px] hidden h-[calc(100vh-120px)] items-start lg:flex">
       <div
         className="
           w-[300px]
@@ -28,18 +48,18 @@ const SidebarSetting = () => {
 
         <div className="py-2">
           <SettingSidebarLinks
-            link={{ name: "Edit profile", path: "/settings/edit-profile" }}
-            iconName="FaUser"
+            link={{ name: primaryLinks[0].name, path: primaryLinks[0].path }}
+            iconName={primaryLinks[0].icon}
           />
 
           <SettingSidebarLinks
-            link={{ name: "Profile Health", path: "/dashboard/settings/profile-health" }}
-            iconName="FaHeart"
+            link={{ name: primaryLinks[1].name, path: primaryLinks[1].path }}
+            iconName={primaryLinks[1].icon}
           />
 
           <SettingSidebarLinks
-            link={{ name: "Change password", path: "/settings/change-password" }}
-            iconName="FaLock"
+            link={{ name: primaryLinks[2].name, path: primaryLinks[2].path }}
+            iconName={primaryLinks[2].icon}
           />
         </div>
 
@@ -61,6 +81,7 @@ const SidebarSetting = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 
